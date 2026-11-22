@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ roadmap.title }} — {{ SITE_NAME }}{% endblock %}
+{% block body_class %}viewer{% endblock %}
+
+{% block content %}
+{% if preview %}
+<div class="preview-banner">Staff preview · status: {{ roadmap.get_status_display }} · <a href="{% url 'admin:roadmaps_roadmap_change' roadmap.pk %}">Back to review</a></div>
+{% endif %}
+
+<div id="map-app">
+  <div id="viewport" class="viewport" tabindex="0" aria-label="Roadmap map. Drag to move, scroll to zoom.">
+    <div id="stage" class="stage">
+      <svg id="wires" class="wires" aria-hidden="true"></svg>
+    </div>
+  </div>
+
+  <div class="map-title ui">
+    <h1>{{ roadmap.title }}</h1>
+    <p>{{ roadmap.description }}</p>
+  </div>
+
+  <div class="toolbar ui" role="toolbar" aria-label="Map controls">
+    <button type="button" id="btn-start" title="Back to the gate">Start</button>
+    <button type="button" id="btn-out" title="Zoom out (−)" aria-label="Zoom out">−</button>
+    <button type="button" id="btn-in" title="Zoom in (+)" aria-label="Zoom in">+</button>
+    <button type="button" id="btn-fit" title="See the whole map (0)">Whole map</button>
+    <span class="toolbar-hint">Drag to move · Scroll to zoom</span>
+  </div>
+
+  <div class="minimap ui" aria-hidden="true"><svg id="minimap"></svg></div>
+
+  <aside id="panel" class="panel ui" hidden aria-live="polite"></aside>
+
+  <noscript>
+    <div class="noscript-outline">
+      <h2>{{ roadmap.title }}</h2>
+      <p>{{ roadmap.description }}</p>
+      <ol>
+        {% for c in roadmap.checkpoints.all %}
+        <li><strong>{{ c.title }}</strong>{% if c.description %} — {{ c.description }}{% endif %}
+          <ul>
+            {% for r in c.resources.all %}
+            <li><a href="{{ r.href }}" rel="noopener noreferrer nofollow">{{ r.title }}</a> ({{ r.get_kind_display }}){% if r.description %} — {{ r.description }}{% endif %}</li>
+            {% endfor %}
+          </ul>
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </noscript>
+</div>
+
+{{ map_data|json_script:"map-data" }}
+{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/layout.js' %}"></script>
+<script src="{% static 'js/map.js' %}"></script>
+{% endblock %}

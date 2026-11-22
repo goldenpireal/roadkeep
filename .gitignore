@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Django: local database, uploaded files (PDFs, MP3s) and collected static files
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Secrets and local settings
+.env
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store

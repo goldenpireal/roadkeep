@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{% if q %}Results for “{{ q }}”{% else %}All roadmaps{% endif %} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1 class="page-title">{% if q %}Results for “{{ q }}”{% else %}All roadmaps{% endif %}</h1>
+    {% include "partials/search_form.html" %}
+
+    {% if page.object_list %}
+    <div class="grid list-grid">
+      {% for r in page.object_list %}
+      <a class="card" href="{% url 'roadmap_detail' r.slug %}">
+        <h3>{{ r.title }}</h3>
+        <p>{{ r.description|truncatewords:28 }}</p>
+        <span class="card-meta">{{ r.checkpoints.all|length }} checkpoint{{ r.checkpoints.all|length|pluralize }}</span>
+      </a>
+      {% endfor %}
+    </div>
+
+    {% if page.paginator.num_pages > 1 %}
+    <nav class="pager" aria-label="Pages">
+      {% if page.has_previous %}<a class="btn btn--ghost" href="?q={{ q|urlencode }}&page={{ page.previous_page_number }}">Previous</a>{% endif %}
+      <span>Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+      {% if page.has_next %}<a class="btn btn--ghost" href="?q={{ q|urlencode }}&page={{ page.next_page_number }}">Next</a>{% endif %}
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="empty">
+      <p>{% if q %}No roadmap matches “{{ q }}” yet.{% else %}There are no roadmaps yet.{% endif %}</p>
+      <p><a class="btn" href="{% url 'contribute' %}">Contribute one</a></p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}<script src="{% static 'js/search.js' %}" defer></script>{% endblock %}

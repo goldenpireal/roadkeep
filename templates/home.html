@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ SITE_NAME }} — free roadmaps for learning anything{% endblock %}
+
+{% block content %}
+<section class="hero">
+  {% include "partials/castle.html" %}
+  <div class="hero-inner">
+    <p class="eyebrow">Free study roadmaps</p>
+    <h1>Every subject has a road.<br>Find yours.</h1>
+    {% include "partials/search_form.html" with large=True %}
+    <p class="hero-note">
+      {% if total %}{{ total }} roadmap{{ total|pluralize }} so far, each one a path of checkpoints and free resources.{% else %}No roadmaps yet. Be the first to add one.{% endif %}
+    </p>
+  </div>
+</section>
+
+{% if featured %}
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Latest roadmaps</h2>
+    <div class="grid">
+      {% for r in featured %}
+      <a class="card" href="{% url 'roadmap_detail' r.slug %}">
+        <h3>{{ r.title }}</h3>
+        <p>{{ r.description|truncatewords:24 }}</p>
+        <span class="card-meta">{{ r.checkpoints.all|length }} checkpoint{{ r.checkpoints.all|length|pluralize }}</span>
+      </a>
+      {% endfor %}
+    </div>
+    <p class="center"><a class="btn btn--ghost" href="{% url 'roadmap_list' %}">Browse all roadmaps</a></p>
+  </div>
+</section>
+{% endif %}
+
+<section class="section section--rule">
+  <div class="container">
+    <h2 class="section-title">How a roadmap works</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">I</span>
+        <h3>Checkpoints</h3>
+        <p>A roadmap is a road of checkpoints. Reach each one in order and you have covered the ground.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">II</span>
+        <h3>Resources</h3>
+        <p>Every checkpoint holds free resources, links and PDFs, each with a note on why it is worth your time.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">III</span>
+        <h3>Branches</h3>
+        <p>When a checkpoint has two or more resources, the road forks. Take whichever suits you; the paths rejoin at the next checkpoint.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="community">
+  <div class="battlement battlement--on-dark" aria-hidden="true"></div>
+  <div class="community-body">
+    <div class="container narrow center">
+      <h2 class="section-title">Know a road others should walk?</h2>
+      <p>Anyone can contribute a roadmap. Submissions are read by our stewards before they are published, so every road on the map has been checked.</p>
+      <p><a class="btn btn--light" href="{% url 'contribute' %}">Contribute a roadmap</a></p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}<script src="{% static 'js/search.js' %}" defer></script>{% endblock %}

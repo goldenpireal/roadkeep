@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Thank you — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container narrow center">
+    <h1 class="page-title">Your roadmap is with the stewards</h1>
+    <p class="lede">Thank you. Once it has been reviewed it will appear on the map for everyone to walk.</p>
+    <p>
+      <a class="btn" href="{% url 'roadmap_list' %}">Browse roadmaps</a>
+      <a class="btn btn--ghost" href="{% url 'contribute' %}">Contribute another</a>
+    </p>
+  </div>
+</section>
+{% endblock %}

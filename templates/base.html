@@ -1,0 +1,52 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/site.css' %}">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <header class="site-header">
+    <a class="brand" href="{% url 'home' %}">
+      <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 3h4v3h2V3h6v3h2V3h4v18h-7v-5a2 2 0 0 0-4 0v5H3z"/></svg>
+      <span>{{ SITE_NAME }}</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="{% url 'roadmap_list' %}">Roadmaps</a>
+      <a href="{% url 'contribute' %}">Contribute</a>
+      {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
+      {% if music_tracks %}
+      <button type="button" id="music-toggle" class="music-toggle" aria-pressed="false" title="Turn background music on">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 9v6h4l5 4V5L7 9z"/><path class="wave" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12"/><path class="slash" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M16 9l5 6M21 9l-5 6"/></svg>
+        <span class="music-label">Music off</span>
+      </button>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main>{% block content %}{% endblock %}</main>
+
+  {% block footer %}
+  <footer class="site-footer">
+    <div class="battlement" aria-hidden="true"></div>
+    <div class="footer-body container">
+      <p class="footer-brand">{{ SITE_NAME }}</p>
+      <p>Free, community-built roadmaps for learning anything from scratch.</p>
+      <p class="footer-links"><a href="{% url 'roadmap_list' %}">Browse</a> · <a href="{% url 'contribute' %}">Contribute a roadmap</a></p>
+    </div>
+  </footer>
+  {% endblock %}
+
+  {% if music_tracks %}
+  {{ music_tracks|json_script:"music-data" }}
+  <script src="{% static 'js/music.js' %}" defer></script>
+  {% endif %}
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Contribute a roadmap — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container narrow">
+    <h1 class="page-title">Contribute a roadmap</h1>
+    <p class="lede">Lay out the road from beginner to confident: a few checkpoints, and for each one the best free resources you know. Our stewards review every submission before it is published.</p>
+
+    <div class="note">
+      <strong>How branching works.</strong> One resource at a checkpoint makes a single straight path.
+      Add two or more resources to the same checkpoint and the road forks into branches that rejoin at the next checkpoint.
+      Resources can be links or PDFs, and each can carry a short description.
+    </div>
+
+    <form id="contribute-form" class="builder" method="post" enctype="multipart/form-data" novalidate
+          data-max-checkpoints="{{ max_checkpoints }}" data-max-resources="{{ max_resources }}" data-max-pdfs="{{ max_pdfs }}">
+      {% csrf_token %}
+      <div class="form-error" id="form-error" role="alert" hidden></div>
+
+      <fieldset class="panel-box">
+        <legend>The roadmap</legend>
+        <label class="field">
+          <span>Title</span>
+          <input type="text" name="title" maxlength="200" placeholder="e.g. Linear Algebra from scratch" required>
+        </label>
+        <label class="field">
+          <span>Description</span>
+          <textarea name="description" rows="4" maxlength="2000" placeholder="Who is this for, and what will they be able to do at the end?" required></textarea>
+        </label>
+        <div class="field-row">
+          <label class="field">
+            <span>Your name <em>(optional)</em></span>
+            <input type="text" name="submitter_name" maxlength="100">
+          </label>
+          <label class="field">
+            <span>Email <em>(optional, never shown)</em></span>
+            <input type="email" name="submitter_email" maxlength="254">
+          </label>
+        </div>
+        <!-- Honeypot for bots. Real visitors never see or fill this. -->
+        <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+      </fieldset>
+
+      <h2 class="section-title left">The road</h2>
+      <div id="checkpoints"></div>
+      <p><button type="button" class="btn btn--ghost" id="add-checkpoint">+ Add checkpoint</button></p>
+
+      <p class="submit-row">
+        <button type="submit" class="btn" id="submit-btn">Send for review</button>
+        <span class="muted" id="submit-status" role="status"></span>
+      </p>
+    </form>
+  </div>
+</section>
+
+<!-- Templates the script clones. Names are assigned just before sending. -->
+<template id="tpl-checkpoint">
+  <div class="cp" data-cp>
+    <div class="cp-head">
+      <span class="cp-badge" data-badge>1</span>
+      <input type="text" data-cp-field="title" maxlength="150" placeholder="Checkpoint title, e.g. Vectors and matrices" aria-label="Checkpoint title">
+      <div class="cp-tools">
+        <button type="button" class="icon-btn" data-act="up" title="Move up" aria-label="Move checkpoint up">↑</button>
+        <button type="button" class="icon-btn" data-act="down" title="Move down" aria-label="Move checkpoint down">↓</button>
+        <button type="button" class="icon-btn" data-act="remove-cp" title="Remove checkpoint" aria-label="Remove checkpoint">×</button>
+      </div>
+    </div>
+    <textarea data-cp-field="description" rows="2" maxlength="1000" placeholder="What should someone know or be able to do at this checkpoint? (optional)" aria-label="Checkpoint description"></textarea>
+    <p class="fork-note" data-fork></p>
+    <div class="resources" data-resources></div>
+    <button type="button" class="btn btn--small btn--ghost" data-act="add-resource">+ Add resource</button>
+  </div>
+</template>
+
+<template id="tpl-resource">
+  <div class="res" data-res>
+    <div class="res-top">
+      <select data-r-field="kind" aria-label="Resource type">
+        <option value="url">Link</option>
+        <option value="pdf">PDF</option>
+      </select>
+      <input type="text" data-r-field="title" maxlength="150" placeholder="Resource title" aria-label="Resource title">
+      <button type="button" class="icon-btn" data-act="remove-res" title="Remove resource" aria-label="Remove resource">×</button>
+    </div>
+    <input type="url" data-r-field="url" maxlength="500" placeholder="https://…" aria-label="Link address">
+    <input type="file" data-r-field="pdf" accept="application/pdf,.pdf" aria-label="PDF file" hidden disabled>
+    <textarea data-r-field="description" rows="2" maxlength="1000" placeholder="Why is this worth reading or watching? (optional)" aria-label="Resource description"></textarea>
+  </div>
+</template>
+{% endblock %}
+
+{% block scripts %}<script src="{% static 'js/contribute.js' %}" defer></script>{% endblock %}
